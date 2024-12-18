@@ -1,0 +1,13 @@
+.env
+.DS_Store
+pg_data
+__pycache__
+*_cache
+certbot/conf/*
+certbot/www/*
+!certbot/conf/.gitkeep
+!certbot/www/.gitkeep
+*.pem
+certbot/
+nginx/logs/
+mariadb_data/
