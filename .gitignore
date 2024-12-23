@@ -11,3 +11,7 @@ certbot/www/*
 certbot/
 nginx/logs/
 mariadb_data/
+admin/
+registrazione/
+admin.zip
+registrazione.zip

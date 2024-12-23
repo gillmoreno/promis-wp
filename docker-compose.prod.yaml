@@ -1,5 +1,6 @@
 services:
   nginx:
+    container_name: wp_nginx
     image: nginx:stable-alpine
     ports:
       - "80:80"
@@ -22,6 +23,7 @@ services:
         max-file: "3"
 
   wordpress:
+    container_name: wp_app
     build:
       context: .
       dockerfile: Dockerfile.prod
@@ -40,12 +42,24 @@ services:
         max-file: "3"
   
   certbot:
+    container_name: wp_certbot
     image: certbot/certbot
-    container_name: certbot
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+  
+  mariadb:
+    container_name: wp_db
+    image: mariadb:latest
+    env_file:
+      - .env
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - wordpress_network
+    ports:
+      - "3306:3306"
 
 networks:
   wordpress_network:
@@ -54,3 +68,5 @@ networks:
 volumes:
   wordpress_data:
     driver: local 
+  mariadb_data:
+    driver: local
