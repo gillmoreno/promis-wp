@@ -21,6 +21,12 @@ services:
       options:
         max-size: "100m"
         max-file: "3"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
 
   wordpress:
     container_name: wp_app
@@ -40,7 +46,13 @@ services:
       options:
         max-size: "100m"
         max-file: "3"
-  
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+
   certbot:
     container_name: wp_certbot
     image: certbot/certbot
@@ -56,10 +68,23 @@ services:
       - .env
     volumes:
       - /mnt/efs/fs1/mysql:/var/lib/mysql
+      - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf:ro
     networks:
       - wordpress_network
     ports:
       - "3306:3306"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: --max_allowed_packet=64M
 
 networks:
   wordpress_network:
