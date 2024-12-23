@@ -24,12 +24,12 @@ services:
 
   wordpress:
     container_name: wp_app
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
+    image: wordpress:6.7.1-php8.2-fpm-alpine
     volumes:
       - ./wordpress:/var/www/html
       - ./php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./admin:/var/www/html/admin
+      - ./registrazione:/var/www/html/registrazione
     env_file:
       - .env
     networks:

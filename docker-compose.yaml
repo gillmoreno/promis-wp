@@ -1,0 +1,61 @@
+services:
+  nginx:
+    container_name: wp_nginx
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./nginx/conf.d/default.dev.conf:/etc/nginx/conf.d/default.conf
+      - ./admin:/var/www/html/admin
+      - ./registrazione:/var/www/html/registrazione
+    depends_on:
+      wordpress:
+        condition: service_started
+    networks:
+      - wordpress_network
+    restart: unless-stopped
+
+  wordpress:
+    container_name: wp_app
+    image: wordpress:6.7.1-php8.2-fpm-alpine
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
+      - ./admin:/var/www/html/admin
+      - ./registrazione:/var/www/html/registrazione
+    env_file:
+      - .env
+    depends_on:
+      mariadb:
+        condition: service_started
+    networks:
+      - wordpress_network
+    restart: unless-stopped
+    # command: >
+    #   sh -c '
+    #     chown -R www-data:www-data /var/www/html/registrazione &&
+    #     find /var/www/html/registrazione -type d -exec chmod 755 {} \; &&
+    #     find /var/www/html/registrazione -type f -exec chmod 644 {} \; &&
+    #     php-fpm
+    #   '
+
+  mariadb:
+    container_name: wp_db
+    image: mariadb:latest
+    env_file:
+      - .env
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - wordpress_network
+    ports:
+      - "3306:3306"
+
+networks:
+  wordpress_network:
+    driver: bridge
+
+volumes:
+  wordpress_data:
+  mariadb_data:
