@@ -1,42 +1,16 @@
-FROM php:8.3-fpm-alpine
+FROM wordpress:php8.2-fpm-alpine
 
-# Install dependencies
-RUN apk add --no-cache \
-    freetype \
-    libjpeg-turbo \
-    libpng \
-    freetype-dev \
-    libjpeg-turbo-dev \
-    libpng-dev \
-    libzip-dev \
-    icu-dev \
-    oniguruma-dev
-
-# Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
-RUN docker-php-ext-install -j$(nproc) \
-    gd \
-    mysqli \
-    pdo \
-    pdo_mysql \
-    zip \
-    intl \
-    opcache \
-    mbstring
-
-# Add production PHP configuration
-COPY php/php.prod.ini /usr/local/etc/php/php.ini
-
-# Download and install WordPress
-ENV WORDPRESS_VERSION 6.7.1
-
+# Install required dependencies and PHP extensions
 RUN set -ex; \
-    curl -o wordpress.tar.gz -fSL "https://wordpress.org/wordpress-${WORDPRESS_VERSION}.tar.gz"; \
-    tar -xzf wordpress.tar.gz -C /var/www/html --strip-components=1; \
-    rm wordpress.tar.gz; \
-    chown -R www-data:www-data /var/www/html
+    \
+    apk add --no-cache \
+        $PHPIZE_DEPS \
+        linux-headers \
+    ; \
+    \
+    docker-php-ext-install pdo_mysql; \
+    \
+    apk del $PHPIZE_DEPS
 
-# Add OPcache configuration
-COPY php/opcache.ini /usr/local/etc/php/conf.d/opcache.ini
-
-WORKDIR /var/www/html 
+# Clear cache
+RUN rm -rf /var/cache/apk/*

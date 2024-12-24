@@ -32,7 +32,9 @@ services:
 
   wordpress:
     container_name: wp_app
-    image: wordpress:6.7.1-php8.2-fpm-alpine
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     volumes:
       - ./wordpress:/var/www/html
       - ./php/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
