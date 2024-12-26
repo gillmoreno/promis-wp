@@ -83,11 +83,6 @@ services:
           memory: 1G
         reservations:
           memory: 512M
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
     command: --max_allowed_packet=64M
 
 networks:
