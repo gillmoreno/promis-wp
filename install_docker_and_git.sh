@@ -56,7 +56,7 @@ Host github.com
     AddKeysToAgent yes
 EOL
 
-# Set proper permissions for SSH config
+# Set proper permissions for SSH files
 chmod 600 ~/.ssh/config
 
 # Configure Git
@@ -72,3 +72,8 @@ sudo systemctl restart docker
 echo "Installation complete!"
 echo "NOTE: You may need to log out and back in for Docker group changes to take effect."
 echo "NOTE: Don't forget to add your SSH keys (id_rsa and id_rsa.pub) to ~/.ssh/" 
+
+
+echo "Remember to run: chmod 600 ~/.ssh/id_rsa && chmod 644 ~/.ssh/id_rsa.pub"
+chmod 600 ~/.ssh/id_rsa
+chmod 644 ~/.ssh/id_rsa.pub
