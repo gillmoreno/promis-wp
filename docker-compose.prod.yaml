@@ -71,7 +71,7 @@ services:
     env_file:
       - .env
     volumes:
-      - /mnt/efs/fs1/mysql:/var/lib/mysql
+      - /mnt/efs/mysql:/var/lib/mysql
       - ./mariadb/my.cnf:/etc/mysql/conf.d/my.cnf:ro
     networks:
       - wordpress_network
